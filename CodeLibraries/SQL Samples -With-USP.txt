@@ -1,0 +1,208 @@
+create table TableWithIdentity
+           ( IdentityColumnName int identity(1, 1) not null primary key,
+             ... )
+
+-- type of this table's column must match the type of the
+-- identity column of the table you'll be inserting into
+declare @IdentityOutput table ( ID int )
+
+insert TableWithIdentity
+     ( ... )
+output inserted.IdentityColumnName into @IdentityOutput
+values
+     ( ... )
+
+select @IdentityValue = (select ID from @IdentityOutput)
+
+
+
+
+
+@@IDENTITY returns the last identity value generated for any table in the current session, across all scopes. You need to be careful here, since it's across scopes. You could get a value from a trigger, instead of your current statement.
+
+SCOPE_IDENTITY() returns the last identity value generated for any table in the current session and the current scope. Generally what you want to use.
+
+IDENT_CURRENT('tableName') returns the last identity value generated for a specific table in any session and any scope. This lets you specify which table you want the value from, in case the two above aren't quite what you need (very rare). Also, as @Guy Starbuck mentioned, "You could use this if you want to get the current IDENTITY value for a table that you have not inserted a record into."
+
+The OUTPUT clause of the INSERT statement will let you access every row that was inserted via that statement. Since it's scoped to the specific statement, it's more straightforward than the other functions above. However, it's a little more verbose (you'll need to insert into a table variable/temp table and then query that) and it gives results even in an error scenario where the statement is rolled back. That said, if your query uses a parallel execution plan, this is the only guaranteed method for getting the identity (short of turning off parallelism). However, it is executed before triggers and cannot be used to return trigger-generated values.
+
+
+
+
+
+
+
+USE AdventureWorks2008R2;
+GO
+DECLARE @MyTableVar table( NewScrapReasonID smallint,
+                           Name varchar(50),
+                           ModifiedDate datetime);
+INSERT Production.ScrapReason
+    OUTPUT INSERTED.ScrapReasonID, INSERTED.Name, INSERTED.ModifiedDate
+        INTO @MyTableVar
+VALUES (N'Operator error', GETDATE());
+
+--Display the result set of the table variable.
+SELECT NewScrapReasonID, Name, ModifiedDate FROM @MyTableVar;
+--Display the result set of the table.
+SELECT ScrapReasonID, Name, ModifiedDate 
+FROM Production.ScrapReason;
+GO
+
+
+
+
+
+
+
+/****** Object:  StoredProcedure [dbo].[uspPathContains]    Script Date: 3/11/2021 1:13:23 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[uspNewFID]
+
+@contains varchar(max),
+@NewFID int
+
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+	INSERT INTO [dbo].[Files]
+           (
+			[Orig_FileName])
+     VALUES
+           (
+		   ''
+		    )
+END
+GO
+
+
+
+Procedure Example :
+
+Create Procedure [dbo].[test]
+@Name varchar(100),
+@ID int Output   
+As  
+Begin   
+SELECT @ID = UserID from tbl_UserMaster where  Name = @Name   
+Return;
+END     
+
+How to call this procedure:
+
+Declare @ID int    
+EXECUTE [dbo].[test] 'Abhishek',@ID OUTPUT   
+PRINT @ID   
+
+
+
+
+
+
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[uspNewFID]
+--@contains varchar(max),
+@NewFID int output
+
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+	INSERT INTO [dbo].[TestDev]
+           (
+			[Name])
+     VALUES
+           (
+		   ''
+		    )
+		set @NewFID = SCOPE_IDENTITY()
+		return;
+END
+
+
+
+
+use [GTL]
+go
+Declare @NewFID int;
+exec uspNewFID @NewFID OUTPUT;
+print @NewFID;
+
+
+
+
+
+
+USE [GTL]
+GO
+/****** Object:  StoredProcedure [dbo].[uspNewFID]    Script Date: 3/11/2021 1:31:08 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[uspNewFID]
+@inName varchar(max),
+@NewFID int output
+
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+	INSERT INTO [dbo].[TestDev]
+           (
+			[Name])
+     VALUES
+           (
+		   @inName
+		    )
+		set @NewFID = SCOPE_IDENTITY()
+	--	return;
+END
+
+
+
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+use [GTL]
+go
+Declare @NewFID int;
+exec uspNewFID 'AnotherFileName', @NewFID OUTPUT;
+print @NewFID;

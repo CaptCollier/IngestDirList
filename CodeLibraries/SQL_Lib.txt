@@ -1,0 +1,991 @@
+SQL_Lib:
+
+
+/****** Script replace the subset of a string located in a column, in this case the column name is 'Path' command from SSMS  ******/
+UPDATE AllPaths SET Path = REPLACE(Path, ' Directory of J:', '')
+WHERE Path LIKE '% Directory of J:%'
+
+/****** Script for Select Rows where one column contains a substring command from SSMS  ******/
+SELECT  [Drive]
+      ,[Path]
+  FROM [GTL].[dbo].[AllPaths] where Path like '%IAN%'
+  
+  
+  
+/********  script alters an existing stored procedure, change 'ALTER PROCEDURE' to 'Create PROCEDURE' to create from scratch  *******/  
+USE [GTL]
+GO
+/****** Object:  StoredProcedure [dbo].[uspPathContains]    Script Date: 12/2/2020 2:00:00 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[uspPathContains]
+
+@contains varchar(max)
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+Select [Drive],[Path],[Status] from [dbo].[AllPaths] a where a.Path like '%'+@contains+'%'
+
+END
+
+
+/*********** to execute the above usp  **************/
+USE [GTL]
+GO
+
+exec uspPathContains @contains='bsd admin';
+
+
+/*********** to execute the above usp  **************/
+USE [GTL]
+GO
+
+exec uspPathContains @contains='__-__-__';
+
+
+SELECT  [ID]
+      ,[Element]
+  FROM [GTL].[dbo].[UniqueElements] where Element like '%[0-9][0-9]-[0-9][0-9]-[0-9][0-9]%'
+
+
+/************  script to locate a string in the Path of AllPath then change the status of them, in this case from O to A *************/
+USE [GTL]
+GO
+
+UPDATE AllPaths SET Status = REPLACE(Status, 'O', 'A')
+WHERE Path LIKE '%bsd admin%'
+
+
+
+USE [GTL]
+GO
+UPDATE AllPaths SET Status = REPLACE(Status, 'A', 'O')
+WHERE Path LIKE '%__-__-__%'
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  *
+  FROM [GTL].[dbo].[AllPaths] where status='A'
+  
+  
+/****** Script for SelectTopNRows command from SSMS 
+SELECT  *
+  FROM AllPaths where Drive like 'Drv_09' ******/
+
+  Select [Drive],[Path],[Status] from [dbo].[AllPaths] a where a.Path like '%bsd admin%'
+  
+  SELECT [ID]
+      ,[Drive]
+      ,[MetaPath]
+      ,[Status]
+  FROM [GTL].[dbo].[AllPaths] where MetaPath like '%parentlab%'
+  
+  
+/**********  Perform bulk insert from a text file (csv) into a table  *********************/
+
+BULK INSERT dbo.tbl_Employees
+FROM 'D:\empdata.csv'
+WITH
+(
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ';',  --delimiter
+	ROWTERMINATOR = '\n',   --For next row
+	TABLOCK,
+	CODEPAGE = 'ACP'
+);
+
+
+BULK INSERT dbo.DateTimeTest
+FROM 'C:\DB\TestImport.txt'
+WITH
+(
+	FIRSTROW = 1,
+	FIELDTERMINATOR = ',',  --delimiter
+	ROWTERMINATOR = '\n',   --For next row
+	TABLOCK,
+	CODEPAGE = 'ACP'
+);
+  
+  
+  
+/************************ Search the datetime2 datatype (column = ID_DateTime)  in this case 11-30-2017 *******************/  
+SELECT TOP (1000) [ID_DateTime]
+      ,[Date]
+      ,[Time]
+  FROM [GTL].[dbo].[DateTimeTest] where  cast(ID_DateTime as date) = '11-30-2017'  
+  
+ /**************  to select between a range of dates  ************************/
+ SELECT *
+FROM LogRequests
+WHERE cast(dateX as date) between '2014-05-09' and '2014-05-10';
+  
+  
+  
+Full text index example:
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  [ID]
+      ,[Drive]
+      ,[MetaPath]
+      ,[Comment]
+      ,[Status]
+  FROM [GTL].[dbo].[MetaDataPaths] where Contains (MetaPath, '"%R26%" or "%Rosa26%" or "%CamK%"')
+
+
+Using std sql:
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  [ID]
+      ,[Drive]
+      ,[MetaPath]
+      ,[Comment]
+      ,[Status]
+  FROM [GTL].[dbo].[MetaDataPaths] where MetaPath like '%R26%'  or MetaPath like  '%Rosa26%' or MetaPath like  '%CamK%'
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  [ID]
+      ,[Drive]
+      ,[MetaPath]
+  FROM [GTL].[dbo].[MetaDataPaths] where MetaPath like '%\Rob\%'and  MetaPath like  '%Behavior%' 
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  [ID]
+      ,[Drive]
+      ,[MetaPath]
+  FROM [GTL].[dbo].[MetaDataPaths] where MetaPath like '%CamK%'  and  MetaPath like  '%Behavior%' 
+
+
+
+=======================================================================
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+UPDATE [GTL].[dbo].[MetaDataPaths]
+SET Status = 'D'
+where Metapath like '%Games%' and status != 'D'
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  *
+  FROM [GTL].[dbo].[MetaDataPaths] where Metapath like '%%' and MetaPath not like '%appdata%' and MetaPath not like '%\.%'
+  
+  /****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  *
+  FROM [GTL].[dbo].[MetaDataPaths] where Metapath like '%Program Files%' and status != 'D' 
+  
+ /****** Script for SelectTopNRows command from SSMS  ******/
+UPDATE [GTL].[dbo].[MetaDataPaths] 
+SET [GTL].[dbo].[MetaDataPaths].Status = 'D'
+where ID=462363
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT 
+[ID]
+      ,[Element]
+  FROM [GTL].[dbo].[UniqueElements]
+  
+  
+
+
+use [GTL]
+go
+Delete from TestDev;
+go
+Delete from DebugLog;
+go
+DBCC CHECKIDENT ('dbo.TestDev',reseed,0); 
+go
+DBCC CHECKIDENT ('dbo.DebugLog',reseed,0); 
+go
+
+
+
+use [GTL]
+go
+Declare @NewFID int;
+exec uspNewFID 'z-AnotherFileName', @NewFID OUTPUT;
+print @NewFID;
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT  *
+  FROM [GTL].[dbo].[TestDev] 
+
+  SELECT  [ID]
+      ,[Note]
+  FROM [GTL].[dbo].[DebugLog]
+  
+  
+  
+  Data Source=SNOWCRASH\SQLSERVER2017STD;Initial Catalog=GTL;User ID=scollier;Password=ranger
+  
+  GTLConnectionString
+  
+  
+  
+  
+https://stackoverflow.com/questions/1260952/how-to-execute-a-stored-procedure-within-c-sharp-program  
+using (var conn = new SqlConnection(connectionString))
+using (var command = new SqlCommand("ProcedureName", conn) { 
+                           CommandType = CommandType.StoredProcedure }) {
+   conn.Open();
+   command.ExecuteNonQuery();
+}
+  
+  
+  
+== Same page another solution  
+  
+ using (SqlConnection conn = new SqlConnection("Server=(local);DataBase=Northwind;Integrated Security=SSPI")) {
+    conn.Open();
+
+    // 1.  create a command object identifying the stored procedure
+    SqlCommand cmd  = new SqlCommand("CustOrderHist", conn);
+
+    // 2. set the command object so it knows to execute a stored procedure
+    cmd.CommandType = CommandType.StoredProcedure;
+
+    // 3. add parameter to command, which will be passed to the stored procedure
+    cmd.Parameters.Add(new SqlParameter("@CustomerID", custId));
+
+    // execute the command
+    using (SqlDataReader rdr = cmd.ExecuteReader()) {
+        // iterate through results, printing each to console
+        while (rdr.Read())
+        {
+            Console.WriteLine("Product: {0,-35} Total: {1,2}",rdr["ProductName"],rdr["Total"]);
+        }
+    }
+}
+  
+ 
+== Same page another solution  with parameters
+
+ 
+    SqlCommand cmd = new SqlCommand("StoreProcedureName",con);
+    cmd.CommandType=CommandType.StoredProcedure;
+    cmd.Parameters.AddWithValue("@value",txtValue.Text);
+    con.Open();
+    int rowAffected=cmd.ExecuteNonQuery();
+    con.Close();
+
+
+The solution seems to be to add ',autocommit=True'
+https://www.easysoft.com/developer/languages/python/examples/CallSP.html
+
+
+
+
+
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT    *
+  FROM [GTL].[dbo].[TestDev] order by ID
+go
+  /****** Script for SelectTopNRows command from SSMS  ******/
+SELECT    *
+  FROM [GTL].[dbo].[DebugLog] order by ID
+go
+SELECT TOP (1000) [FID]
+      ,[MetaPath_ID]
+      ,[Orig_FileName]
+      ,[FileExt]
+      ,[Current_FileName]
+      ,[CreationDateTime]
+      ,[CreationDate]
+      ,[ModificationDateTime]
+      ,[ModificationDate]
+      ,[Size]
+      ,[CurrentPath]
+      ,[Comments]
+  FROM [GTL].[dbo].[Files]
+  go
+  
+  
+  
+use [GTL]
+go
+Delete from ActivityLog;
+go
+Delete from Files;
+go
+Delete from [logs].[Files];
+go
+DBCC CHECKIDENT ('dbo.ActivityLog',reseed,0); 
+go
+DBCC CHECKIDENT ('dbo.Files',reseed,0); 
+go
+DBCC CHECKIDENT ('Logs.Files',reseed,0); 
+go
+
+
+
+Reset the database....
+
+use [GTL]
+go
+
+
+
+Delete from Files;
+go
+DBCC CHECKIDENT ('dbo.Files',reseed,0);
+go
+
+Delete from [logs].[Files]; 
+go
+DBCC CHECKIDENT ('Logs.Files',reseed,0); 
+go
+
+
+
+
+Delete from [dbo].[MetaDataPaths]; 
+go
+DBCC CHECKIDENT ('dbo.MetaDataPaths',reseed,0); 
+go
+
+Delete from [logs].[MetaDataPaths]; 
+go
+DBCC CHECKIDENT ('Logs.MetaDataPaths',reseed,0); 
+go
+
+
+
+
+Delete from ActivityLog;
+go
+DBCC CHECKIDENT ('dbo.ActivityLog',reseed,0); 
+go
+
+
+
+
+
+
+
+
+
+SELECT *
+  FROM [GTL].[dbo].[DebugLog]  where cast([ActivityDate] AS date)='03/23/2021'
+
+
+  
+  
+  C02YNFHXLVCG
+  
+  USE [GTL]
+GO
+/****** Object:  StoredProcedure [dbo].[uspNewMetaPath_ID]    Script Date: 3/25/2021 1:50:18 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE  [dbo].[uspNewMetaPath_ID]
+
+@Drive nvarchar(50),
+@MetaPath varchar(max),
+@Comment varchar(max),
+@Status nchar(1),
+@NewMetaPathID int output
+
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	INSERT INTO [dbo].[MetaDataPaths] 
+		(
+		  [Drive],
+		  [MetaPath],
+		  [Comment],
+		  [Status]
+		)
+	VALUES
+		(
+		  @Drive,
+		  @MetaPath,
+          @Comment,
+          @Status
+		)
+
+	set @NewMetaPathID = SCOPE_IDENTITY()
+	SELECT @NewMetaPathID AS NewMetaPathID 
+
+		
+	Insert into [dbo].[ActivityLog] ([Note],[ActivityDate]) VALUES ('Added New MetaPath for MetaPath ID '+trim(str(@NewMetaPathID)), GETDATE())
+
+
+END
+
+///////////////////////   Files table Triggers
+
+
+USE [GTL]
+GO
+/****** Object:  Trigger [dbo].[trgAddFile]    Script Date: 5/27/2021 8:48:48 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER TRIGGER [dbo].[trgAddFile]
+   ON  [dbo].[Files]
+   AFTER INSERT
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO [logs].[Files] ([FID],
+	                          [Action],
+							  [ActionDate],
+							  [MetaPath_ID],
+							  [Orig_FileName],
+							  [FileExt],
+							  [Current_FileName],
+							  [CreationDateTime],
+							  [CreationDate],
+							  [ModificationDateTime],
+							  [ModificationDate],
+							  [Size],
+							  [CurrentPath],
+							  [Comments])
+    SELECT	
+	        i.FID,
+			'A',
+			GetDate(),
+			i.[MetaPath_ID],
+			i.[Orig_FileName],
+			i.[FileExt],
+			i.[Current_FileName],
+			i.[CreationDateTime],
+			i.[CreationDate],
+			i.[ModificationDateTime],
+			i.[ModificationDate],
+			i.[Size],
+			i.[CurrentPath],
+			i.[Comments]		   
+	from inserted i
+END
+
+-----------------------------------------------------------
+
+USE [GTL]
+GO
+/****** Object:  Trigger [dbo].[trgDelteFile]    Script Date: 5/27/2021 8:50:19 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER TRIGGER [dbo].[trgDelteFile]
+   ON  [dbo].[Files]
+   AFTER DELETE
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO [logs].[Files] ([FID],
+	                          [Action],
+							  [ActionDate],
+							  [MetaPath_ID],
+							  [Orig_FileName],
+							  [FileExt],
+							  [Current_FileName],
+							  [CreationDateTime],
+							  [CreationDate],
+							  [ModificationDateTime],
+							  [ModificationDate],
+							  [Size],
+							  [CurrentPath],
+							  [Comments])
+    SELECT	
+	        d.FID,
+			'D',
+			GetDate(),
+			d.[MetaPath_ID],
+			d.[Orig_FileName],
+			d.[FileExt],
+			d.[Current_FileName],
+			d.[CreationDateTime],
+			d.[CreationDate],
+			d.[ModificationDateTime],
+			d.[ModificationDate],
+			d.[Size],
+			d.[CurrentPath],
+			d.[Comments]				   
+	from deleted d
+
+END
+
+
+------------------------------------------------------------------------------------
+
+
+USE [GTL]
+GO
+/****** Object:  Trigger [dbo].[trgUpdateFile]    Script Date: 5/27/2021 8:50:55 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER TRIGGER [dbo].[trgUpdateFile]
+   ON  [dbo].[Files]
+   AFTER Update
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+		INSERT INTO [logs].[Files] ([FID],
+	                          [Action],
+							  [ActionDate],
+							  [MetaPath_ID],
+							  [Orig_FileName],
+							  [FileExt],
+							  [Current_FileName],
+							  [CreationDateTime],
+							  [CreationDate],
+							  [ModificationDateTime],
+							  [ModificationDate],
+							  [Size],
+							  [CurrentPath],
+							  [Comments])
+    SELECT	
+	        i.FID,
+			'U',
+			GetDate(),
+			i.[MetaPath_ID],
+			i.[Orig_FileName],
+			i.[FileExt],
+			i.[Current_FileName],
+			i.[CreationDateTime],
+			i.[CreationDate],
+			i.[ModificationDateTime],
+			i.[ModificationDate],
+			i.[Size],
+			i.[CurrentPath],
+			i.[Comments]		   
+	from inserted i
+
+END
+
+
+
+
+
+/////////////////////  end of Files table Triggers
+
+
+
+
+
+
+UPDATE [dbo].[MetaDataPaths] SET Comment = 'Not all who wonder are lost' WHERE MetaPathID=491277
+
+
+use GTL;
+go
+
+UPDATE [dbo].[MetaDataPaths] SET Com = 'Not all who' WHERE MetaPathID=491277;
+go
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT * 
+  FROM [GTL].[dbo].[MetaDataPaths] where MetaPathID=491277
+  
+  
+  
+  
+  INSERT INTO OldMetaPath
+             (Drive, MetaPath, Status, Comment, MetaPathID)
+SELECT MetaDataPaths.Drive, MetaDataPaths.MetaPath, MetaDataPaths.Status, MetaDataPaths.Comment, MetaDataPaths.MetaPathID
+FROM   MetaDataPaths
+
+
+
+  
+SELECT COUNT(MetaPath) as PathCount, MetaPath
+FROM OldMetaPath
+GROUP BY MetaPath order by PathCount desc;
+  
+  
+select count(FileExt) as ExtCount, FileExt from files group by FileExt order by ExtCount desc 
+
+ 
+  
+SELECT COUNT(MetaPath) as PathCount, MetaPath
+FROM OldMetaPath
+GROUP BY MetaPath having COUNT(MetaPath) > 1 order by PathCount desc;
+  
+  
+  
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT MetaPathID, MetaPath
+  FROM [GTL].[dbo].[MetaDataPaths]  where MetaPath like '%demo%' order by metapath
+  
+  
+  
+select F.*,M.MetaPath from Files as F
+left  join MetaDataPaths as M
+on F.MetaPath_ID=M.MetaPathID order by MetaPath_ID asc
+
+select M.MetaPath,F.* from Files as F
+left  join MetaDataPaths as M
+on F.MetaPath_ID=M.MetaPathID order by MetaPath_ID asc
+
+
+SELECT * 
+  FROM [GTL].[dbo].[Files] where Year(creationDate)='2017'
+
+SELECT * 
+  FROM [GTL].[dbo].[Files] where Year(creationDate)<'2017'
+
+
+SELECT  *
+  FROM [GTL].[dbo].[Files] where CreationDate='01-01-1970'
+  
+  
+  SELECT  *
+  FROM [GTL].[dbo].[Files] where Year(CreationDate)='0001'
+  
+  
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)<'2017'  order by modYear asc 
+  
+
+-11644473600.0
+
+
+
+SELECT COUNT(FileExt) as ExtCount, FileExt
+FROM Files
+GROUP BY FileExt having COUNT(FileExt) > 1 order by ExtCount desc;
+
+
+
+select M.MetaPath, F.* from Files as F
+left  join MetaDataPaths as M
+on F.MetaPath_ID=M.MetaPathID where M.MetaPath like '%mice%' order by MetaPath_ID asc
+
+
+SELECT DISTINCT FileExt
+FROM Files
+
+
+
+C:\Users\ShaneCollier-USF\Documents\Lab\SQL_Lib.txt
+
+
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)>='2017'  order by modYear asc 
+  
+  
+SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)>'2013'  and Year(ModificationDate)<'2017' order by modYear asc 
+  
+SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)<'2014'  order by modYear asc 
+  
+  
+  
+  /////////////////  select Reference Years 2014,2015, 2016
+  
+  
+   SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2014'  order by modYear asc 
+
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2015'  order by modYear asc 
+
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2016'  order by modYear asc 
+  
+  ---  Combined
+  SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)>'2013'  and Year(ModificationDate)<'2017' order by modYear asc 
+  
+  SELECT SUM(Size) AS TotalSize FROM Files  where Year(ModificationDate)>'2013'  and Year(ModificationDate)<'2017';
+  
+  
+  -------------------  By year with total file size calculated for each year
+  
+   SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2014'  order by modYear asc 
+
+SELECT SUM(Size) AS TotalSize FROM Files  where Year(ModificationDate)='2014';
+
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2015'  order by modYear asc 
+
+SELECT SUM(Size) AS TotalSize FROM Files  where Year(ModificationDate)='2015';
+
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2016'  order by modYear asc 
+
+SELECT SUM(Size) AS TotalSize FROM Files  where Year(ModificationDate)='2016';
+  
+  
+  
+
+  
+  ////////////////////  select Archive Years
+  
+  
+  SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)<'2014'  order by modYear asc 
+  
+  
+SELECT SUM(Size) AS TotalSize FROM Files   where Year(ModificationDate)<'2014';
+  
+  
+  ////////////////////////////  select current research
+  
+   SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)>='2017'  order by modYear asc 
+  
+  
+  
+  
+  
+///////////////////////  Select the highest MetaPathID currently in the Files table.  
+  
+SELECT 
+      max(MetaPath_ID) as LargestMetapID
+  FROM [GTL].[dbo].[Files]
+  
+  
+  
+  select * from logs.Files where FID=243347
+  
+  
+  
+select * from MetaDataPaths where MetaPath like '%,%'
+  
+  
+  
+  
+  
+Original File Name ---> \Pierre\Project_BIN1-AD\Caliber_5XFAD_scan08192016\CNPase-3D6_0\785\pyramid\pyramid_files\9\1_1.tif
+New Filename with FID ====> \Pierre\Project_BIN1-AD\Caliber_5XFAD_scan08192016\CNPase-3D6_0\785\pyramid\pyramid_files\9\1_1_FID-486402.tif
+  
+  
+  
+  /****** Script for SelectTopNRows command from SSMS  ******/
+SELECT *
+ FROM [GTL].[dbo].[Files]   where   Orig_FileName like '%_FID-%'  order by FID asc
+/*  FROM [GTL].[dbo].[Files]   where   Orig_FileName like '%_FID-%' and Orig_FileName like '13_0%' AND MetaPath_ID=2181 order by FID asc
+  
+  
+SELECT *
+  FROM [GTL].[logs].[Files] where Orig_FileName like '%_FID-%' and cast(ActionDate as date)!='06/07/2021' and Action='A'
+
+
+
+Update logs.Files
+set Comments='50' where Action='D'
+
+
+  
+SELECT COUNT(*)
+FROM dbo.Files
+
+
+------------  Find the Metapath ID that matches a given metapath
+SELECT *
+  FROM [GTL].[dbo].[MetaDataPaths] where MetaPath like '\Pierre\Project_BIN1-AD\Caliber_5XFAD_scan08192016\Amph1-M78_0_1\785\pyramid\pyramid_files\14%'
+
+-------------  Find Met5a
+select * from MetaDataPaths where MetaPath like '%,%'
+
+
+SELECT distinct Metapath_ID 
+  FROM [GTL].[logs].[Files] where Orig_FileName like '%_FID-%' and cast(ActionDate as datetime)>'2021-06-07 16:25:00.0' and cast(ActionDate as datetime)<'2021-06-07 16:45:28.647' and Action='U' order by Metapath_ID
+  
+--------  find the largest metapath ID 
+ SELECT 
+      max(MetaPath_ID) as LargestMetapID
+  FROM [GTL].[dbo].[Files]
+ 
+ ---------------   generate a list of MetaPath_ID's thate have the FID identifier present in at least one of thier associated file Orig_FileName.
+ SELECT distinct MetaPath_ID
+ FROM [GTL].[dbo].[Files]   where   Orig_FileName like '%_FID-%'  order by MetaPath_ID asc
+ 
+ 
+  
+  
+----- Total problem records  The Files table contains 30,021 rows where the original filename contains '_FID-'   These need to be accounted for.
+SELECT *
+ FROM [GTL].[dbo].[Files]   where   Orig_FileName like '%_FID-%'  order by FID asc  
+  
+  
+  
+Group 1a  
+6/1/2021   results: 84 rows
+SELECT *
+  FROM [GTL].[logs].[Files]  where Orig_FileName like '%_FID-%' and cast(ActionDate as datetime)>'2021-06-01 07:00' and cast(ActionDate as datetime)<'2021-06-01 20:00' and Action='U' order by ActionDate
+  
+
+Group 1b
+6/2/2021   results: 8,757 rows
+SELECT *
+  FROM [GTL].[logs].[Files]  where Orig_FileName like '%_FID-%' and cast(ActionDate as datetime)>'2021-06-02 07:00' and cast(ActionDate as datetime)<'2021-06-02 23:00' and Action='U' order by ActionDate
+
+
+6/3/2021   results: 84 rows
+
+
+6/4/2021   results: 84 rows
+
+  
+  
+6/5/2021   results: 84 rows  
+  
+  
+ 
+6/6/2021   results: 84 rows
+
+ 
+  
+  
+Group 1 ------  4:25 to 6:30 on 6/7/2021
+SELECT *
+  FROM [GTL].[logs].[Files] where Orig_FileName like '%_FID-%' and cast(ActionDate as datetime)>'2021-06-07 16:25:00.0' and cast(ActionDate as datetime)<'2021-06-07 18:30:00.0' and Action='U' order by ActionDate
+  
+   
+  
+Group 2 --- Part 5 repeat load  between 4:25 and 4:46 on 6-7-2021 results: 19845 rows
+SELECT *
+  FROM [GTL].[logs].[Files] where Orig_FileName like '%_FID-%' and cast(ActionDate as datetime)>'2021-06-07 16:25:00.0' and cast(ActionDate as datetime)<'2021-06-07 16:46' and Action='A' order by ActionDate desc
+  
+Metapath_ID's processed for this run:  262   range 1899 to 2181 (The Metapath_ID for the last path processed as I stopped the app in mid processing was 2181, the first path in the part5 file is 1899)  This is the range processed and needs to be cleaned up associated with the accidental
+rerunning of the drv_04-part5 file.  The following sql code returns the metapath id's processed in a given time range.
+
+SELECT distinct Metapath_ID 
+  FROM [GTL].[logs].[Files] where Orig_FileName like '%_FID-%' and cast(ActionDate as datetime)>'2021-06-07 16:25:00.0' and cast(ActionDate as datetime)<'2021-06-07 16:45:28.647' and Action='U' order by Metapath_ID  
+
+
+------------  SQL used to remove damaged records with _FID-
+Delete F from Files  F
+left  join logs.Files L
+on F.FID=L.FID where F.Orig_FileName like '%_FID-%' and cast(L.ActionDate as datetime)>'2021-06-07 16:25:00.0' and cast(L.ActionDate as datetime)<'2021-06-07 16:45:28.647' and L.Action='A' 
+
+  
+  
+Group 3 --- Part 6 repeat load  between 5:05 and 6:30 on 6-7-2021     results: 1,335 rows
+SELECT *
+  FROM [GTL].[logs].[Files] where Orig_FileName like '%_FID-%' and cast(ActionDate as datetime)>'2021-06-07 17:05:00.0' and cast(ActionDate as datetime)<'2021-06-07 18:29:28.647' and Action='U' order by ActionDate desc
+  
+  
+  
+  19,845 rows
+   1,335 rows
+  21,180 total rows    Total records showing for 7:00 AM to 9:00 PM on 6/7/2021
+
+
+----------------  identify the rows in the Files table that meet the criteria for removal.  The count is correct at 19,845 and meets all other criteria (see sql code)
+select L.ActionDate, F.* from Files as F
+left  join logs.Files as L
+on F.FID=L.FID where F.Orig_FileName like '%_FID-%' and cast(L.ActionDate as datetime)>'2021-06-07 16:25:00.0' and cast(L.ActionDate as datetime)<'2021-06-07 16:45:28.647' and L.Action='A' order by Metapath_ID 
+
+ 
+ 
+-------------  List the files in the log file for Files to confirm the Deletion was logged along with the initial add and updates. 
+ SELECT *
+  FROM [GTL].[logs].[Files] where MetaPath_ID=2181 and Orig_FileName like '%_FID-%' order by FID asc
+
+
+
+
+SELECT *
+  FROM [GTL].[dbo].[Files] where Orig_FileName like '%_FID-%' 
+
+  SELECT COUNT(*)
+FROM dbo.Files
+
+
+
+
+ SELECT SUM(Size) AS TotalSize FROM Files  where CurrentPath like '%pyramid%';
+
+
+
+Do we have duplicats?
+SELECT Orig_FileName, Size, COUNT(*) as 'Count'
+FROM Files
+GROUP BY Orig_FileName, Size
+HAVING COUNT(*) > 1
+
+
+Once we know we have them, list them...
+
+SELECT f.*
+FROM Files f
+JOIN (SELECT Orig_FileName, Size, COUNT(*) as'Count'
+FROM Files 
+GROUP BY Orig_FileName, Size
+HAVING count(*) > 1 ) d
+ON f.Orig_FileName = d.Orig_FileName
+AND f.Size = d.Size
+ORDER BY f.Orig_FileName
+
+generic example
+SELECT a.*
+FROM users a
+JOIN (SELECT username, email, COUNT(*)
+FROM users 
+GROUP BY username, email
+HAVING count(*) > 1 ) b
+ON a.username = b.username
+AND a.email = b.email
+ORDER BY a.email
+
+
+
+SELECT f.*
+FROM Files f
+JOIN (SELECT Orig_FileName, Size, COUNT(*) as'Count'
+FROM Files 
+GROUP BY Orig_FileName, Size
+HAVING count(*) > 1 ) d
+ON f.Orig_FileName = d.Orig_FileName
+AND f.Size = d.Size
+ORDER BY f.Orig_FileName
+
+
+
+
+UPDATE [GTL].[dbo].[OldMetaPath]
+SET [Status] = 'D'
+WHERE MetaPathID=432058
+
+
+

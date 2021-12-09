@@ -1,0 +1,7 @@
+._
+autorun
+Autorun
+.VolumeIcon
+.exe
+.dll
+$UGM

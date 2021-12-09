@@ -1,0 +1,49 @@
+  ////////////////////  select Archive Years
+  
+  
+  SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)<'2014'  order by modYear asc 
+  
+  
+SELECT SUM(Size) AS TotalSize FROM Files   where Year(ModificationDate)<'2014';
+
+
+////////////////  variations on the above theme ///////////////////////////////////
+
+   SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2014'  order by modYear asc 
+
+SELECT SUM(Size) AS TotalSize FROM Files  where Year(ModificationDate)='2014';
+
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2015'  order by modYear asc 
+
+SELECT SUM(Size) AS TotalSize FROM Files  where Year(ModificationDate)='2015';
+
+ SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)='2016'  order by modYear asc 
+
+SELECT SUM(Size) AS TotalSize FROM Files  where Year(ModificationDate)='2016';
+  
+
+
+  ////////////////////////////  select current research
+  
+   SELECT  *,Year(ModificationDate) as modYear
+  FROM [GTL].[dbo].[Files] where Year(ModificationDate)>='2017'  order by modYear asc 
+  
+
+
+  ///////////////////////   Select records where MetaPath Contians a string   ////////////////////////
+  SELECT MetaPathID, MetaPath
+  FROM [GTL].[dbo].[MetaDataPaths]  where MetaPath like '%demo%' order by metapath
+
+
+
+
+  //////////////////////////  display metapath with file related data /////////////////////////////////////
+
+  select F.*,M.MetaPath from Files as F
+left  join MetaDataPaths as M
+on F.MetaPath_ID=M.MetaPathID order by MetaPath_ID asc
+
